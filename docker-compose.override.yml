@@ -1,0 +1,39 @@
+version: '3'
+services:
+    randevumapi:
+        build:
+            context: ./randevumapi
+            dockerfile: Dockerfile.dev
+        depends_on:
+            - mongo
+        ports: 
+            - '5000:5000'
+        environment:
+            HOST: 0.0.0.0
+
+    randevumui:
+        stdin_open: true
+        build:
+            context: ./randevumui
+            dockerfile: Dockerfile.dev
+        ports: 
+            - '3000:3000'
+        
+        environment:
+            APIURL : ${APIURL}
+            HOST: 0.0.0.0
+        volumes:
+            - ./randevumui:/app
+
+    mongo:
+        image: mongo
+        restart: always
+        ports:
+                - '27017:27017'
+        volumes:
+            - './data:/data/db'
+        
+        environment:
+            HOST: 0.0.0.0
+            MONGO_INITDB_ROOT_USERNAME: ${MongoUserName}
+            MONGO_INITDB_ROOT_PASSWORD: ${MongoPassWord}
